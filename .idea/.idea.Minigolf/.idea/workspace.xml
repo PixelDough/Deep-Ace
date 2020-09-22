@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="fbed8685-3552-40c2-98fc-b263f1d33740" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/Scripts/GravityOrbit.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/SkyboxController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI_FadeController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GravityController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UIFadeController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GolfAimCameraController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/TestRigidbodyController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GolfController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/ShadowBlob.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GolfBallController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/FreelookCameraController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GolfGameController.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1hlHP1UgmIAirLJhgakl2SrhPub" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Discover.Launch.Via.Unity" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="selectedOptions">
+        <set />
+      </option>
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="selectedOptions">
+        <set />
+      </option>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="fbed8685-3552-40c2-98fc-b263f1d33740" name="Default Changelist" comment="" />
+      <created>1600578730708</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1600578730708</updated>
+      <workItem from="1600578734041" duration="10701000" />
+      <workItem from="1600722151842" duration="24684000" />
+    </task>
+    <servers />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="539" y="183" width="840" height="856" key="search.everywhere.popup" timestamp="1600751625407">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1489" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1536.824@-1920.0.1536.824" timestamp="1600650569625" />
+    <state x="539" y="183" width="840" height="856" key="search.everywhere.popup/0.0.1920.1040/-1920.4.1536.824@0.0.1920.1040" timestamp="1600751625407" />
+  </component>
+</project>
