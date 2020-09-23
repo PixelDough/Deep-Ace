@@ -21,8 +21,13 @@ public class GolfBallController : MonoBehaviour
     private Player _input;
     private Camera _camera;
 
-    private bool _isDead = false;
+    public bool isDead = false;
     private bool _isOnFlatGround = true;
+
+    public bool isAsleep
+    {
+        get { return _rigidbody.IsSleeping(); }
+    }
 
     private void Start()
     {
@@ -72,8 +77,8 @@ public class GolfBallController : MonoBehaviour
 
     private void Die()
     {
-        if (_isDead) return;
-        _isDead = true;
+        if (isDead) return;
+        isDead = true;
         _rigidbody.isKinematic = true;
         
         deathBallRenderer.gameObject.SetActive(true);

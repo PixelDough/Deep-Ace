@@ -26,7 +26,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: dbe589cb436b54f419e1ddaa194af4e6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionCubemap:
@@ -53,7 +53,7 @@ Material:
     - _LightingMode: 1
     - _PrecisionGeometryWeight: 1
     - _Reflection: 1
-    - _ReflectionBlendMode: 0
+    - _ReflectionBlendMode: 2
     - _RenderQueueCategory: 0
     - _ShadingEvaluationMode: 0
     - _SrcBlend: 1
@@ -65,6 +65,6 @@ Material:
     - _AlphaClippingScaleBiasMinMax: {r: 1, g: 0, b: 0, a: 1}
     - _DoubleSidedConstants: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
-    - _MainColor: {r: 0.29098147, g: 0.7735849, b: 0, a: 1}
-    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MainColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ReflectionColor: {r: 2, g: 2, b: 2, a: 1}
   m_BuildTextureStacks: []

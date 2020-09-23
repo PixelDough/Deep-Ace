@@ -18,6 +18,12 @@ public class GolfGameController : MonoBehaviour
     [SerializeField] private Image hitModeSelectionImage;
     [SerializeField] private Texture2D hitModeSelectionSprites;
 
+    [Header("Windows")] 
+    [SerializeField] private UIWindowController hitModeSelectionWindow;
+    [SerializeField] private UIWindowController powerSelectorWindow;
+
+    private List<UIWindowController> _allWindows;
+
     private List<CinemachineVirtualCamera> _virtualCameras;
     private CinemachineVirtualCamera _currentVirtualCamera;
 
@@ -45,6 +51,7 @@ public class GolfGameController : MonoBehaviour
         Aim,
         Power,
         Roll,
+        Dead,
         Freelook,
     }
 
@@ -60,6 +67,7 @@ public class GolfGameController : MonoBehaviour
         HitMode = HitModes.Air;
 
         _virtualCameras = GetComponentsInChildren<CinemachineVirtualCamera>().ToList();
+        _allWindows = GetComponentsInChildren<UIWindowController>(true).ToList();
     }
 
     private void Update()
@@ -74,18 +82,13 @@ public class GolfGameController : MonoBehaviour
         {
             case GameStates.Aim:
                 if (_currentVirtualCamera != aimVirtualCamera) ChangeCamera(aimVirtualCamera);
+                EnsureWindowsAreOpen(true, hitModeSelectionWindow);
                 
-                aimVirtualCamera.transform.Rotate(Vector3.up, _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 10, Space.World);
-                Vector3 direction = aimVirtualCamera.transform.forward;
-                direction.y = 0;
-                direction = direction.normalized;
-                if (HitMode == HitModes.Air)
-                {
-                    direction.y = 1f;
-                }
+                aimVirtualCamera.transform.Rotate(Vector3.up, _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 5, Space.World);
+                
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_Hit))
                 {
-                    golfBall.Hit(direction.normalized, 8);
+                    _gameState = GameStates.Power;
                 }
                 
                 //golfBall.DrawPath(direction.normalized * 8);
@@ -106,13 +109,62 @@ public class GolfGameController : MonoBehaviour
                 }
                 
                 break;
+            case GameStates.Power:
+                EnsureWindowsAreOpen(true, hitModeSelectionWindow, powerSelectorWindow);
+                Vector3 direction = aimVirtualCamera.transform.forward;
+                direction.y = 0;
+                direction = direction.normalized;
+                if (HitMode == HitModes.Air)
+                {
+                    direction.y = 1f;
+                }
+                if (_input.GetButtonDown(RewiredConsts.Action.Golf_Hit))
+                {
+                    golfBall.Hit(direction.normalized, 8);
+                    _gameState = GameStates.Roll;
+                }
+                break;
+            case GameStates.Roll:
+                EnsureWindowsAreOpen(true);
+                aimVirtualCamera.transform.Rotate(Vector3.up, _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 5, Space.World);
+                if (golfBall.isDead)
+                    _gameState = GameStates.Dead;
+                else if (golfBall.isAsleep)
+                    _gameState = GameStates.Aim;
+                break;
+            case GameStates.Dead:
+
+                break;
             case GameStates.Freelook:
+                EnsureWindowsAreOpen(true);
                 if (_currentVirtualCamera != freelookVirtualCamera) ChangeCamera(freelookVirtualCamera);
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_ToggleFreecam))
                 {
                     _gameState = GameStates.Aim;
                 }
                 break;
+        }
+    }
+
+    private void EnsureWindowIsOpen(UIWindowController window)
+    {
+        if (!window.gameObject.activeSelf) window.gameObject.SetActive(true);
+        if (!window.enabled) window.enabled = true;
+    }
+
+    private void EnsureWindowsAreOpen(bool doClosingAnimations, params UIWindowController[] windows)
+    {
+        foreach (var window in _allWindows)
+        {
+            if (windows.Contains(window))
+                EnsureWindowIsOpen(window);
+            else
+            {
+                if (window.enabled)
+                {
+                    window.Disable(doClosingAnimations);
+                }
+            }
         }
     }
 
