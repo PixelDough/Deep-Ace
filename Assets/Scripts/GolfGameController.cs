@@ -27,6 +27,8 @@ public class GolfGameController : MonoBehaviour
     private List<CinemachineVirtualCamera> _virtualCameras;
     private CinemachineVirtualCamera _currentVirtualCamera;
 
+    private float _aimCameraAngle = 0;
+
     public enum HitModes
     {
         Ground,
@@ -76,6 +78,12 @@ public class GolfGameController : MonoBehaviour
         // _currentGameState?.Update();
     }
 
+    private void UpdateAimCamera()
+    {
+        aimVirtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>().m_XAxis.Value = _aimCameraAngle;
+        _aimCameraAngle += _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 5;
+    }
+
     private void UpdateState()
     {
         switch (_gameState)
@@ -84,7 +92,7 @@ public class GolfGameController : MonoBehaviour
                 if (_currentVirtualCamera != aimVirtualCamera) ChangeCamera(aimVirtualCamera);
                 EnsureWindowsAreOpen(true, hitModeSelectionWindow);
                 
-                aimVirtualCamera.transform.Rotate(Vector3.up, _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 5, Space.World);
+                UpdateAimCamera();
                 
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_Hit))
                 {
@@ -126,7 +134,7 @@ public class GolfGameController : MonoBehaviour
                 break;
             case GameStates.Roll:
                 EnsureWindowsAreOpen(true);
-                aimVirtualCamera.transform.Rotate(Vector3.up, _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 5, Space.World);
+                UpdateAimCamera();
                 if (golfBall.isDead)
                     _gameState = GameStates.Dead;
                 else if (golfBall.isAsleep)

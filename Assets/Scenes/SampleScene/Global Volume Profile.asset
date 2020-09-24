@@ -37,7 +37,7 @@ MonoBehaviour:
     min: 0
     max: 1
   color:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0.5714286
     min: 0
     max: 1

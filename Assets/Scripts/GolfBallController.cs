@@ -15,6 +15,9 @@ public class GolfBallController : MonoBehaviour
     [SerializeField] private Mesh ballPathMesh;
     [SerializeField] private Material ballPathMaterial;
     
+    // TODO: GET RID OF THIS BEING HERE PUT THIS SOMEWHERE ELSE!!!
+    [SerializeField] private ParticleSystem ___winPartile;
+    
     private Rigidbody _rigidbody;
     private Vector2 _inputDirection;
 
@@ -69,20 +72,31 @@ public class GolfBallController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (isDead) return;
+        
         if (other.gameObject.CompareTag("ZoneDeath"))
         {
             Die();
         }
+
+        if (other.gameObject.CompareTag("EndPortal"))
+        {
+            Die(true);
+            ___winPartile.Play();
+        }
     }
 
-    private void Die()
+    private void Die(bool instant = false)
     {
         if (isDead) return;
         isDead = true;
         _rigidbody.isKinematic = true;
-        
-        deathBallRenderer.gameObject.SetActive(true);
+
         ballRenderer.enabled = false;
+        if (instant) return;
+
+        deathBallRenderer.gameObject.SetActive(true);
+        
         //deathBallRenderer.transform.LeanAlpha(0, 1f);
         //LeanTween.alpha(deathBallRenderer.gameObject, 0, 1f);
         
