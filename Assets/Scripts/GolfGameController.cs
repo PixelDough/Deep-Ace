@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using Cinemachine;
 using Rewired;
 using UnityEngine;
@@ -28,6 +30,8 @@ public class GolfGameController : MonoBehaviour
     private CinemachineVirtualCamera _currentVirtualCamera;
 
     private float _aimCameraAngle = 0;
+    
+    private List<GolfBallController.GolfPoint> _golfPoints = new List<GolfBallController.GolfPoint>();
 
     public enum HitModes
     {
@@ -63,13 +67,15 @@ public class GolfGameController : MonoBehaviour
 
     private Player _input;
 
-    private void Start()
+    private void Awake()
     {
         _input = ReInput.players.GetPlayer(0);
         HitMode = HitModes.Air;
 
         _virtualCameras = GetComponentsInChildren<CinemachineVirtualCamera>().ToList();
         _allWindows = GetComponentsInChildren<UIWindowController>(true).ToList();
+        
+        EnterState();
     }
 
     private void Update()
@@ -81,25 +87,58 @@ public class GolfGameController : MonoBehaviour
     private void UpdateAimCamera()
     {
         aimVirtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>().m_XAxis.Value = _aimCameraAngle;
-        _aimCameraAngle += _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 5;
+
+        if (Input.GetAxis("Mouse X") != 0)
+        {
+            _aimCameraAngle += _input.GetAxis(RewiredConsts.Action.Golf_RotateY) / 5;
+        }
+        else
+        {
+            _aimCameraAngle += _input.GetAxis(RewiredConsts.Action.Golf_RotateY) * Time.deltaTime * 75;
+        }
     }
 
-    private void UpdateState()
+    public void ChangeStates(GameStates state)
+    {
+        ExitState();
+        _gameState = state;
+        EnterState();
+    }
+
+    private void EnterState()
     {
         switch (_gameState)
         {
             case GameStates.Aim:
                 if (_currentVirtualCamera != aimVirtualCamera) ChangeCamera(aimVirtualCamera);
                 EnsureWindowsAreOpen(true, hitModeSelectionWindow);
-                
+                break;
+            case GameStates.Power:
+                EnsureWindowsAreOpen(true, hitModeSelectionWindow, powerSelectorWindow);
+                break;
+            case GameStates.Roll:
+                EnsureWindowsAreOpen(true);
+                break;
+            case GameStates.Freelook:
+                EnsureWindowsAreOpen(true);
+                Time.timeScale = 0;
+                break;
+        }
+    }
+    
+    private void UpdateState()
+    {
+        switch (_gameState)
+        {
+            case GameStates.Aim:
                 UpdateAimCamera();
                 
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_Hit))
                 {
-                    _gameState = GameStates.Power;
+                    ChangeStates(GameStates.Power);
                 }
                 
-                //golfBall.DrawPath(direction.normalized * 8);
+                //golfBall.DrawPath(new Vector2(5, 7).normalized * 8);
 
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_ChangeHitMode))
                 {
@@ -113,12 +152,11 @@ public class GolfGameController : MonoBehaviour
                 {
                     freelookVirtualCamera.transform.position = aimVirtualCamera.transform.position;
                     freelookVirtualCamera.transform.forward = aimVirtualCamera.transform.forward;
-                    _gameState = GameStates.Freelook;
+                    ChangeStates(GameStates.Freelook);
                 }
                 
                 break;
             case GameStates.Power:
-                EnsureWindowsAreOpen(true, hitModeSelectionWindow, powerSelectorWindow);
                 Vector3 direction = aimVirtualCamera.transform.forward;
                 direction.y = 0;
                 direction = direction.normalized;
@@ -126,38 +164,102 @@ public class GolfGameController : MonoBehaviour
                 {
                     direction.y = 1f;
                 }
+                //golfBall.DrawPath(direction.normalized * 3);
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_Hit))
                 {
                     golfBall.Hit(direction.normalized, 8);
-                    _gameState = GameStates.Roll;
+                    ChangeStates(GameStates.Roll);
                 }
                 break;
             case GameStates.Roll:
-                EnsureWindowsAreOpen(true);
                 UpdateAimCamera();
                 if (golfBall.isDead)
-                    _gameState = GameStates.Dead;
+                    ChangeStates(GameStates.Dead);
                 else if (golfBall.isAsleep)
-                    _gameState = GameStates.Aim;
+                    ChangeStates(GameStates.Aim);
                 break;
             case GameStates.Dead:
 
                 break;
             case GameStates.Freelook:
-                EnsureWindowsAreOpen(true);
                 if (_currentVirtualCamera != freelookVirtualCamera) ChangeCamera(freelookVirtualCamera);
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_ToggleFreecam))
                 {
-                    _gameState = GameStates.Aim;
+                    ChangeStates(GameStates.Aim);
                 }
                 break;
         }
     }
 
+    public void ExitState()
+    {
+        switch (_gameState)
+        {
+            case GameStates.Freelook:
+                Time.timeScale = 1;
+                break;
+        }
+    }
+
+    /*
+    #region Game States
+
+    private class GameStateClass
+    {
+        protected GolfGameController game;
+        private bool _isActive = false;
+
+        public GameStateClass(GolfGameController game)
+        {
+            this.game = game;
+        }
+
+        public void StartOnce()
+        {
+            if (_isActive) return;
+            Start();
+            _isActive = true;
+        }
+        
+        protected virtual void Start()
+        {
+            
+        }
+
+        public virtual void Update()
+        {
+            
+        }
+
+        public virtual void End()
+        {
+            _isActive = false;
+        }
+
+    }
+    
+    private class StateAim : GameStateClass
+    {
+        public StateAim(GolfGameController game) : base(game)
+        {
+        }
+        
+        protected override void Start()
+        {
+            base.Start();
+            
+            if (game._currentVirtualCamera != game.aimVirtualCamera) game.ChangeCamera(game.aimVirtualCamera);
+            game.EnsureWindowsAreOpen(true, game.hitModeSelectionWindow);
+        }
+    }
+    
+    #endregion
+    */
+
     private void EnsureWindowIsOpen(UIWindowController window)
     {
-        if (!window.gameObject.activeSelf) window.gameObject.SetActive(true);
-        if (!window.enabled) window.enabled = true;
+        window.gameObject.SetActive(true);
+        window.enabled = true;
     }
 
     private void EnsureWindowsAreOpen(bool doClosingAnimations, params UIWindowController[] windows)
@@ -176,7 +278,7 @@ public class GolfGameController : MonoBehaviour
         }
     }
 
-    private void ChangeCamera(CinemachineVirtualCamera virtualCamera)
+    public void ChangeCamera(CinemachineVirtualCamera virtualCamera)
     {
         foreach (var cam in _virtualCameras)
         {

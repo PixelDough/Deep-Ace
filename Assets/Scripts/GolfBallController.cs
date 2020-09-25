@@ -22,7 +22,6 @@ public class GolfBallController : MonoBehaviour
     private Vector2 _inputDirection;
 
     private Player _input;
-    private Camera _camera;
 
     public bool isDead = false;
     private bool _isOnFlatGround = true;
@@ -34,7 +33,6 @@ public class GolfBallController : MonoBehaviour
 
     private void Start()
     {
-        _camera = Camera.main;
         _rigidbody = GetComponent<Rigidbody>();
         _input = ReInput.players.GetPlayer(0);
 
@@ -113,6 +111,15 @@ public class GolfBallController : MonoBehaviour
         foreach (var contact in other.contacts)
         {
             _isOnFlatGround = Vector3.Angle(contact.normal, Vector3.up) < 15;
+        }
+    }
+    
+    public struct GolfPoint
+    {
+        public Vector3 position;
+        public GolfPoint(Vector3 position)
+        {
+            this.position = position;
         }
     }
 

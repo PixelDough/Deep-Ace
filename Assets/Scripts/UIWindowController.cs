@@ -16,7 +16,7 @@ public class UIWindowController : MonoBehaviour
 
     private void Start()
     {
-        Disable(false);
+        //Disable(false);
     }
 
     private void OnEnable()
