@@ -21,7 +21,6 @@ public class GolfGameController : MonoBehaviour
     [SerializeField] private Texture2D hitModeSelectionSprites;
 
     [Header("Windows")] 
-    [SerializeField] private UIWindowController hitModeSelectionWindow;
     [SerializeField] private UIWindowController powerSelectorWindow;
 
     private List<UIWindowController> _allWindows;
@@ -32,8 +31,8 @@ public class GolfGameController : MonoBehaviour
     private float _aimCameraAngle = 0;
     
     private List<GolfBallController.GolfPoint> _golfPoints = new List<GolfBallController.GolfPoint>();
-
-    public enum HitModes
+    
+    /*public enum HitModes
     {
         Ground,
         Air,
@@ -49,7 +48,7 @@ public class GolfGameController : MonoBehaviour
             Sprite sprite = Sprite.Create(hitModeSelectionSprites, new Rect((int) HitMode * 32, 0, 32, 32), new Vector2(16, 16));
             hitModeSelectionImage.sprite = sprite;
         }
-    }
+    }*/
 
     public enum GameStates
     {
@@ -70,7 +69,7 @@ public class GolfGameController : MonoBehaviour
     private void Awake()
     {
         _input = ReInput.players.GetPlayer(0);
-        HitMode = HitModes.Air;
+        //HitMode = HitModes.Air;
 
         _virtualCameras = GetComponentsInChildren<CinemachineVirtualCamera>().ToList();
         _allWindows = GetComponentsInChildren<UIWindowController>(true).ToList();
@@ -111,10 +110,10 @@ public class GolfGameController : MonoBehaviour
         {
             case GameStates.Aim:
                 if (_currentVirtualCamera != aimVirtualCamera) ChangeCamera(aimVirtualCamera);
-                EnsureWindowsAreOpen(true, hitModeSelectionWindow);
+                EnsureWindowsAreOpen(true);
                 break;
             case GameStates.Power:
-                EnsureWindowsAreOpen(true, hitModeSelectionWindow, powerSelectorWindow);
+                EnsureWindowsAreOpen(true, powerSelectorWindow);
                 break;
             case GameStates.Roll:
                 EnsureWindowsAreOpen(true);
@@ -140,13 +139,13 @@ public class GolfGameController : MonoBehaviour
                 
                 //golfBall.DrawPath(new Vector2(5, 7).normalized * 8);
 
-                if (_input.GetButtonDown(RewiredConsts.Action.Golf_ChangeHitMode))
+                /*if (_input.GetButtonDown(RewiredConsts.Action.Golf_ChangeHitMode))
                 {
                     if (HitMode + 1 == HitModes.COUNT)
                         HitMode = 0;
                     else
                         HitMode++;
-                }
+                }*/
 
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_ToggleFreecam))
                 {
@@ -160,14 +159,17 @@ public class GolfGameController : MonoBehaviour
                 Vector3 direction = aimVirtualCamera.transform.forward;
                 direction.y = 0;
                 direction = direction.normalized;
-                if (HitMode == HitModes.Air)
+                if (true)
                 {
-                    direction.y = 1f;
+                    direction.y = 0f;
                 }
                 //golfBall.DrawPath(direction.normalized * 3);
                 if (_input.GetButtonDown(RewiredConsts.Action.Golf_Hit))
                 {
-                    golfBall.Hit(direction.normalized, 8);
+                    // Max of 13!!!
+                    // Drag = .75
+                    // Angular Drag = 1
+                    golfBall.Hit(direction.normalized, 13);
                     ChangeStates(GameStates.Roll);
                 }
                 break;

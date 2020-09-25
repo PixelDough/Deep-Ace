@@ -60,12 +60,13 @@ public class GolfBallController : MonoBehaviour
 
     public void Hit(Vector3 direction, float force)
     {
-        if (_input.GetButtonDown(RewiredConsts.Action.Golf_Hit))
-        {
-            // _rigidbody.AddForce(direction * 5, ForceMode.Impulse);
-            // _rigidbody.AddForce(Vector3.up * 7, ForceMode.Impulse);
-            _rigidbody.AddForce(direction * force, ForceMode.Impulse);
-        }
+        _rigidbody.maxAngularVelocity = 25;
+        // _rigidbody.AddForce(direction * 5, ForceMode.Impulse);
+        // _rigidbody.AddForce(Vector3.up * 7, ForceMode.Impulse);
+        transform.rotation = Quaternion.LookRotation(direction);
+        _rigidbody.AddForce(direction * force, ForceMode.Impulse);
+        //_rigidbody.angularVelocity = new Vector3(400, 0, 0);
+        _rigidbody.AddRelativeTorque(new Vector3(0, 0, 25), ForceMode.VelocityChange);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -83,6 +84,7 @@ public class GolfBallController : MonoBehaviour
             ___winPartile.Play();
         }
     }
+
 
     private void Die(bool instant = false)
     {
@@ -106,12 +108,21 @@ public class GolfBallController : MonoBehaviour
         }).setDelay(0.5f);
     }
 
+    /*private void OnCollisionEnter(Collision other)
+    {
+        if (_rigidbody.angularVelocity.sqrMagnitude > 1)
+            _rigidbody.angularVelocity = Vector3.Lerp(_rigidbody.angularVelocity,Vector3.zero, 20 * Time.deltaTime);
+        if (_rigidbody.velocity.sqrMagnitude > 1)
+            _rigidbody.velocity = Vector3.Lerp(_rigidbody.velocity, new Vector3(0, _rigidbody.velocity.y, 0), 10 * Time.deltaTime);
+    }*/
+
     private void OnCollisionStay(Collision other)
     {
         foreach (var contact in other.contacts)
         {
             _isOnFlatGround = Vector3.Angle(contact.normal, Vector3.up) < 15;
         }
+
     }
     
     public struct GolfPoint
