@@ -53,6 +53,7 @@ public class GolfGameController : MonoBehaviour
     public enum GameStates
     {
         Intro,
+        Spawn,
         Aim,
         Power,
         Roll,
@@ -111,6 +112,7 @@ public class GolfGameController : MonoBehaviour
             case GameStates.Aim:
                 if (_currentVirtualCamera != aimVirtualCamera) ChangeCamera(aimVirtualCamera);
                 EnsureWindowsAreOpen(true);
+                _golfPoints.Add(new GolfBallController.GolfPoint(golfBall.transform.position));
                 break;
             case GameStates.Power:
                 EnsureWindowsAreOpen(true, powerSelectorWindow);
@@ -118,9 +120,12 @@ public class GolfGameController : MonoBehaviour
             case GameStates.Roll:
                 EnsureWindowsAreOpen(true);
                 break;
+            case GameStates.Dead:
+                StartCoroutine(RespawnBall());
+                break;
             case GameStates.Freelook:
                 EnsureWindowsAreOpen(true);
-                Time.timeScale = 0;
+                //Time.timeScale = 0;
                 break;
         }
     }
@@ -153,7 +158,6 @@ public class GolfGameController : MonoBehaviour
                     freelookVirtualCamera.transform.forward = aimVirtualCamera.transform.forward;
                     ChangeStates(GameStates.Freelook);
                 }
-                
                 break;
             case GameStates.Power:
                 Vector3 direction = aimVirtualCamera.transform.forward;
@@ -288,6 +292,14 @@ public class GolfGameController : MonoBehaviour
         }
 
         _currentVirtualCamera = virtualCamera;
+    }
+
+    public IEnumerator RespawnBall()
+    {
+        yield return new WaitForSeconds(2f);
+        golfBall.Respawn(_golfPoints.Last());
+        _gameState = GameStates.Aim;
+        yield return null;
     }
 
 }

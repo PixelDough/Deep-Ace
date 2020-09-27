@@ -14,6 +14,9 @@ public class GolfBallController : MonoBehaviour
     [Header("Ball Path")]
     [SerializeField] private Mesh ballPathMesh;
     [SerializeField] private Material ballPathMaterial;
+
+    [SerializeField] private TrailRenderer trailRenderer;
+    [SerializeField] private ParticleSystem spawnParticles;
     
     // TODO: GET RID OF THIS BEING HERE PUT THIS SOMEWHERE ELSE!!!
     [SerializeField] private ParticleSystem ___winPartile;
@@ -60,13 +63,22 @@ public class GolfBallController : MonoBehaviour
 
     public void Hit(Vector3 direction, float force)
     {
-        _rigidbody.maxAngularVelocity = 25;
+        _rigidbody.maxAngularVelocity = 1000;
         // _rigidbody.AddForce(direction * 5, ForceMode.Impulse);
         // _rigidbody.AddForce(Vector3.up * 7, ForceMode.Impulse);
         transform.rotation = Quaternion.LookRotation(direction);
         _rigidbody.AddForce(direction * force, ForceMode.Impulse);
         //_rigidbody.angularVelocity = new Vector3(400, 0, 0);
-        _rigidbody.AddRelativeTorque(new Vector3(0, 0, 25), ForceMode.VelocityChange);
+        _rigidbody.AddRelativeTorque(new Vector3(force, 0, 0), ForceMode.VelocityChange);
+    }
+
+    public void Teleport(Vector3 position)
+    {
+        _rigidbody.isKinematic = true;
+        transform.position = position;
+        _rigidbody.isKinematic = false;
+        
+        trailRenderer.Clear();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -85,6 +97,46 @@ public class GolfBallController : MonoBehaviour
         }
     }
 
+    public void Respawn(GolfPoint golfPoint)
+    {
+        isDead = false;
+        Teleport(golfPoint.position);
+        _rigidbody.isKinematic = false;
+        ballRenderer.enabled = true;
+        
+        Color col = deathBallRenderer.material.GetColor("_MainColor");
+        col.a = 1;
+        deathBallRenderer.material.SetColor("_MainColor", col);
+        deathBallRenderer.enabled = false;
+
+        spawnParticles.transform.position = transform.position;
+        spawnParticles.Play();
+
+    }
+
+    /*private IEnumerator RespawnAnimation()
+    {
+        ballRenderer.enabled = false;
+        _rigidbody.isKinematic = true;
+        deathBallRenderer.enabled = true;
+        
+        while (deathBallRenderer.material.GetColor("_MainColor").a < 1f)
+        {
+            LeanTween.value(deathBallRenderer.gameObject, 0f, 1f, .5f).setOnUpdate((float val) =>
+            {
+                Color col = deathBallRenderer.material.GetColor("_MainColor");
+                col.a = val;
+                deathBallRenderer.material.SetColor("_MainColor", col);
+            });
+            yield return null;
+        }
+
+        ballRenderer.enabled = true;
+        _rigidbody.isKinematic = false;
+        deathBallRenderer.enabled = false;
+        
+        yield return null;
+    }*/
 
     private void Die(bool instant = false)
     {
@@ -95,7 +147,7 @@ public class GolfBallController : MonoBehaviour
         ballRenderer.enabled = false;
         if (instant) return;
 
-        deathBallRenderer.gameObject.SetActive(true);
+        deathBallRenderer.enabled = true;
         
         //deathBallRenderer.transform.LeanAlpha(0, 1f);
         //LeanTween.alpha(deathBallRenderer.gameObject, 0, 1f);

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Font3D Base
   m_EditorClassIdentifier: 
   fontModels: {fileID: 919132149155446097, guid: d2156b716394ea145b1a36ea4a82ff47, type: 3}
-  fontString: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+  fontString: -0123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ
+  allCaps: 1

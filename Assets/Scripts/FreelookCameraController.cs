@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class FreelookCameraController : MonoBehaviour
 {
+    [SerializeField] private SphereCollider zoneSphere;
+    [SerializeField] private new Rigidbody rigidbody;
     private Player _input;
     private Vector3 _rotation;
     private CinemachineVirtualCamera _virtualCamera;
@@ -19,7 +21,7 @@ public class FreelookCameraController : MonoBehaviour
         _virtualCamera = GetComponent<CinemachineVirtualCamera>();
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         _rotation = transform.rotation.eulerAngles;
         if (!_virtualCamera.isActiveAndEnabled) return;
@@ -40,5 +42,14 @@ public class FreelookCameraController : MonoBehaviour
         movement.y = _input.GetAxis(RewiredConsts.Action.Freecam_MoveY);
         movement.z = _input.GetAxis(RewiredConsts.Action.Freecam_MoveZ);
         transform.Translate(movement.normalized / 100 * (doBoost ? 2 : 1), Space.Self);
+        transform.position = Vector3.ClampMagnitude(transform.position, zoneSphere.radius);
     }
+
+    /*private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Solid"))
+        {
+            
+        }
+    }*/
 }

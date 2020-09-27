@@ -21,7 +21,10 @@ public class GameManager : MonoBehaviour
             date = date.Replace(" ","_");
             date = date.Replace(":","-");
             ScreenCapture.CaptureScreenshot("Assets/Screenshots/Screenshot_" + date + ".png");
-            AssetDatabase.Refresh();
+            #if (UNITY_EDITOR)
+                if (Application.isEditor)
+                    AssetDatabase.Refresh();
+            #endif
         }
     }
 }
