@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Windows;
 using System.IO;
 using Siccity.GLTFUtility;
 using UnityEngine.Networking;
-using Directory = System.IO.Directory;
+using System.IO;
+using System.Linq;
 using Random = UnityEngine.Random;
 
 public class ModLevelMeshImporter : MonoBehaviour
@@ -19,6 +18,13 @@ public class ModLevelMeshImporter : MonoBehaviour
 
     private void Start()
     {
+        var path = Application.streamingAssetsPath;
+        var info = new DirectoryInfo(path);
+        var dirInfo = info.GetDirectories();
+        var fileInfo = info.GetFiles().Where(f => !f.Name.EndsWith(".meta"));
+        foreach (var dir in info.GetDirectories()) Debug.Log(dir);
+        foreach (var file in fileInfo) Debug.Log(file);
+        return;
         DirectoryInfo directoryInfo = new DirectoryInfo(Application.streamingAssetsPath);
         Debug.Log("Streaming Assets Path: " + Application.streamingAssetsPath);
         FileInfo[] allFiles = directoryInfo.GetFiles("*.gltf", SearchOption.AllDirectories);

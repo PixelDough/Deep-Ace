@@ -34,6 +34,8 @@ public class GolfBallController : MonoBehaviour
         get { return _rigidbody.IsSleeping(); }
     }
 
+    public bool isDoneRolling = true;
+
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -44,7 +46,9 @@ public class GolfBallController : MonoBehaviour
 
     private void Update()
     {
-        _rigidbody.sleepThreshold = _isOnFlatGround ? 3 : 0;
+        //_rigidbody.sleepThreshold = _isOnFlatGround ? 3 : 0;
+        
+        _isOnFlatGround = false;
     }
 
     public void DrawPath(Vector3 velocity)
@@ -63,6 +67,8 @@ public class GolfBallController : MonoBehaviour
 
     public void Hit(Vector3 direction, float force)
     {
+        _rigidbody.isKinematic = false;
+        isDoneRolling = false;
         _rigidbody.maxAngularVelocity = 1000;
         // _rigidbody.AddForce(direction * 5, ForceMode.Impulse);
         // _rigidbody.AddForce(Vector3.up * 7, ForceMode.Impulse);
@@ -70,6 +76,32 @@ public class GolfBallController : MonoBehaviour
         _rigidbody.AddForce(direction * force, ForceMode.Impulse);
         //_rigidbody.angularVelocity = new Vector3(400, 0, 0);
         _rigidbody.AddRelativeTorque(new Vector3(force, 0, 0), ForceMode.VelocityChange);
+    }
+
+    public void ControlMovingBall()
+    {
+        if (isDoneRolling) return;
+        
+        if (isAsleep)
+        {
+            _rigidbody.velocity = Vector3.zero;
+            _rigidbody.isKinematic = true;
+            isDoneRolling = true;
+        }
+        else if (_rigidbody.velocity.sqrMagnitude > 0.1f)
+        {
+            if (_input.GetButton(RewiredConsts.Action.Freecam_MoveZ))
+            {
+                if (_input.GetAxis(RewiredConsts.Action.Freecam_MoveZ) >= 0) return;
+            
+                var vel = _rigidbody.velocity;
+                vel.x = Mathf.Lerp(vel.x, 0, 2 * Time.deltaTime);
+                vel.z = Mathf.Lerp(vel.z, 0, 2 * Time.deltaTime);
+                _rigidbody.velocity = vel;
+            }
+        }
+
+        _isOnFlatGround = false;
     }
 
     public void Teleport(Vector3 position)
@@ -170,9 +202,11 @@ public class GolfBallController : MonoBehaviour
 
     private void OnCollisionStay(Collision other)
     {
+        _isOnFlatGround = false;
         foreach (var contact in other.contacts)
         {
-            _isOnFlatGround = Vector3.Angle(contact.normal, Vector3.up) < 15;
+            if (Vector3.Angle(contact.normal, Vector3.up) < 15)
+                _isOnFlatGround = true;
         }
 
     }

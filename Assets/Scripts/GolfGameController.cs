@@ -21,6 +21,7 @@ public class GolfGameController : MonoBehaviour
     [SerializeField] private Texture2D hitModeSelectionSprites;
 
     [Header("Windows")] 
+    [SerializeField] private UIWindowController aimModeWindow;
     [SerializeField] private UIWindowController powerSelectorWindow;
 
     private List<UIWindowController> _allWindows;
@@ -111,7 +112,7 @@ public class GolfGameController : MonoBehaviour
         {
             case GameStates.Aim:
                 if (_currentVirtualCamera != aimVirtualCamera) ChangeCamera(aimVirtualCamera);
-                EnsureWindowsAreOpen(true);
+                EnsureWindowsAreOpen(true, aimModeWindow);
                 _golfPoints.Add(new GolfBallController.GolfPoint(golfBall.transform.position));
                 break;
             case GameStates.Power:
@@ -179,9 +180,10 @@ public class GolfGameController : MonoBehaviour
                 break;
             case GameStates.Roll:
                 UpdateAimCamera();
+                golfBall.ControlMovingBall();
                 if (golfBall.isDead)
                     ChangeStates(GameStates.Dead);
-                else if (golfBall.isAsleep)
+                else if (golfBall.isDoneRolling)
                     ChangeStates(GameStates.Aim);
                 break;
             case GameStates.Dead:

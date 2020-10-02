@@ -7,6 +7,8 @@ public class Billboard : MonoBehaviour
 
     public bool localAxes = false;
     public bool lockToY = true;
+    public bool flipFacingDirection = true;
+    public bool lerpToDirection = false;
     public enum AimModes
     {
         LookAtCamera,
@@ -14,18 +16,31 @@ public class Billboard : MonoBehaviour
     }
     public AimModes aimMode = AimModes.LookAtCamera;
 
-    void Update()
+    void FixedUpdate()
     {
-
+        float dir = (flipFacingDirection ? -1 : 1);
         switch(aimMode)
         {
             case AimModes.LookAtCamera:
-                transform.LookAt(Camera.main.transform.position, Vector3.up);
+            {
+                Quaternion target =
+                    Quaternion.LookRotation((transform.position - Camera.main.transform.position).normalized * dir);
+
+                if (lerpToDirection) target = Quaternion.Lerp(transform.rotation, target, 10 * Time.deltaTime);
+
+                transform.rotation = target;
 
                 break;
+            }
             case AimModes.CopyCameraForward:
-                transform.forward = -Camera.main.transform.forward;
+            {
+                Vector3 target = Camera.main.transform.forward * dir;
+
+                if (lerpToDirection) target = Vector3.Slerp(transform.forward, target, 10 * Time.deltaTime);
+                
+                transform.forward = target;
                 break;
+            }
         }
         
         if (lockToY)
